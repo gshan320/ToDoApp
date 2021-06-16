@@ -71,11 +71,11 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
                 parmItem!!.date = taskDate.text.toString()
                 AddTask(parmItem!!).execute();
             }else {
-                val taskItem =  TaskItem(0,title = taskTitle.toString(),time = taskTime.toString(),date = taskDate.toString())
+                val taskItem = TaskItem(0, title = taskTitle.toString(), time = taskTime.toString(), date = taskDate.toString())
                 taskItem.title = taskTitle.text.toString()
                 taskItem.date = taskDate.text.toString()
                 taskItem.time = taskTime.text.toString()
-                db!!.taskDao().insertTask(taskItem)
+                db!!.taskDao()!!.insertTask(taskItem)
             }
         }
     }
@@ -122,9 +122,9 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
 
         private suspend fun doInBackground(vararg params: Void?): Void? = withContext(Dispatchers.IO) { // to run code in Background Thread
             if(parmItem != null){
-                db!!.taskDao().updateTask(taskItem)
+                db!!.taskDao()!!.updateTask(taskItem)
             }else{
-                db!!.taskDao().insertTask(taskItem)
+                db!!.taskDao()!!.insertTask(taskItem)
             }
             delay(1000) // simulate async work
             return@withContext null

@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
         }
 
         private suspend fun doInBackground(): String = withContext(Dispatchers.IO) { // to run code in Background Thread
-            allTasks!!.addAll(db.taskDao().getTaskByDate(dateString)!!)
+            allTasks!!.addAll(db.taskDao()!!.getTasksByDate(dateString)!!)
             delay(1000) // simulate async work
             return@withContext "Got Items by Date"
         }
@@ -182,7 +182,7 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
         }
 
         private suspend fun doInBackground(vararg params: Void?): Void? = withContext(Dispatchers.IO) { // to run code in Background Thread
-            db!!.taskDao().deleteTask(taskItem)
+            db!!.taskDao()!!.deleteTask(taskItem)
             return@withContext null
         }
 
