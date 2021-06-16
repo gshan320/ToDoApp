@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/toolbar"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:background="@color/design_default_color_primary">
+
+                <TextView
+                    android:id="@+id/today_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Today"
+                    android:fontFamily="@font/allerta"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="25dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="35dp">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/task_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10 Tasks"
+                    android:textStyle="bold"
+                    android:textColor="@color/task_color"
+                    android:layout_below="@id/today_title"
+                    android:layout_marginLeft="20dp">
+
+                </TextView>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_add_new"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add New"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/design_default_color_primary"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/rounded_button"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="120dp"
+                android:padding="20dp"
+                android:background="@drawable/left_corner_bg">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+                    <TextView
+                        android:id="@+id/tv_no_result"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No results found!"
+                        android:layout_centerInParent="true"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/allerta">
+
+                    </TextView>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
