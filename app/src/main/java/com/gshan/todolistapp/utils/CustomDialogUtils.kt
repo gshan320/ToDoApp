@@ -3,19 +3,17 @@ package com.gshan.todolistapp.utils
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CalendarView
 import android.widget.TimePicker
-import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import com.gshan.todolistapp.R
 import com.gshan.todolistapp.callback.ActionCallBack
 
 object CustomDialogUtils {
 
-    var TAG: String = CustomDialogUtils::class.java.getSimpleName()
+    var TAG: String = CustomDialogUtils::class.java.simpleName
     var selectedDate: String = ""
     var selectedTime: String = ""
 

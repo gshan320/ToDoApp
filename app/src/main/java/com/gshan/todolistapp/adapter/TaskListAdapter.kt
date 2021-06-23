@@ -14,7 +14,7 @@ import com.gshan.todolistapp.adapter.TaskListAdapter.TaskListViewHolder
 import com.gshan.todolistapp.callback.ActionCallBack.TaskItemClick
 import com.gshan.todolistapp.database.TaskItem
 
-class TaskListAdapter(var context: Context, var data: MutableList<TaskItem?>?, var callback: TaskItemClick) :
+class TaskListAdapter(var context: Context, var data: List<TaskItem>, var callback: TaskItemClick) :
     RecyclerView.Adapter<TaskListViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
         return TaskListViewHolder(
@@ -23,17 +23,17 @@ class TaskListAdapter(var context: Context, var data: MutableList<TaskItem?>?, v
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
-        holder.taskName!!.text = data!![position]!!.title
-        holder.time!!.text = data?.get(position)!!.time
+        holder.taskName!!.text = data[position].title
+        holder.time!!.text = data[position].time
         holder.more!!.setOnClickListener(View.OnClickListener { v ->
             callback.clickItem(
-                data!![position], v
+                data[position], v
             )
         })
     }
 
     override fun getItemCount(): Int {
-        return data!!.size
+        return data.size
     }
 
     inner class TaskListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -16,17 +16,17 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp">
+            android:layout_margin="16dp"
+            android:hint="Enter Task Name">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Task Name"
                 android:fontFamily="sans-serif-light"
                 android:textSize="13sp"
                 android:textColor="@color/design_default_color_primary"
-                android:inputType="text">
+                android:inputType="textCapSentences|textAutoCorrect">
 
             </com.google.android.material.textfield.TextInputEditText>
 
@@ -37,13 +37,13 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:hint="Pick Time">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Pick Time"
                 android:fontFamily="sans-serif-light"
                 android:textSize="13sp"
                 android:textColor="@color/design_default_color_primary">
@@ -56,13 +56,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp">
+            android:layout_marginLeft="16dp"
+            android:hint="Choose Date">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Choose Date"
                 android:fontFamily="sans-serif-light"
                 android:textSize="13sp"
                 android:textColor="@color/design_default_color_primary">

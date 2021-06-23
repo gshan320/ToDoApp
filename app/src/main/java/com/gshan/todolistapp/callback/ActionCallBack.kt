@@ -13,6 +13,6 @@ interface ActionCallBack {
     }
 
     interface TaskItemClick {
-        fun clickItem(taskItem: TaskItem?, view: View?)
+        fun clickItem(taskItem: TaskItem, view: View)
     }
 }

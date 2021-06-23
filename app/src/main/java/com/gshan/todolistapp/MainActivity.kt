@@ -23,8 +23,8 @@ import com.gshan.todolistapp.config.DataConfig
 import com.gshan.todolistapp.database.AppDatabase
 import com.gshan.todolistapp.database.TaskItem
 import com.gshan.todolistapp.utils.CustomDialogUtils
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, ActionCallBack.TaskItemClick {
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
     @BindView(R.id.today_title) lateinit var todayTitle: TextView
 
     lateinit var adapter: TaskListAdapter
-    private var allTasks: MutableList<TaskItem?>? = null
+    private lateinit var allTasks: List<TaskItem>
     private lateinit var db: AppDatabase
     private lateinit var chooseDate: String
     private val TAG = MainActivity::class.java.simpleName
@@ -46,28 +46,50 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
+        Log.d("lifecycle","onCreate invoked");
 
         setSupportActionBar(toolbar)
-        supportActionBar!!.setTitle("")
+        supportActionBar!!.title = ""
         toolbarTitle.text = "ToDo List"
 
-        db = AppDatabase.getDatabase(this)!!
+        db = AppDatabase.getDatabase(this)
         chooseDate = DataConfig.getCurrentDate(this)
 
-        allTasks = java.util.ArrayList()
-        (allTasks as java.util.ArrayList<TaskItem?>).clear()
+        allTasks = ArrayList()
+        (allTasks as ArrayList<TaskItem>).clear()
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = TaskListAdapter(this, allTasks, this)
         recyclerView.adapter = adapter
 
         Log.e(TAG, "CURRENT DATE: " + DataConfig.getCurrentDate(this))
-        FetchTask(DataConfig.getCurrentDate(this)).execute()
+        fetchTask(DataConfig.getCurrentDate(this))
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("lifecycle", "onStart invoked")
     }
 
     override fun onResume() {
         super.onResume()
-        FetchTask(chooseDate).execute()
+        Log.d("lifecycle", "onStart invoked")
+        fetchTask(chooseDate)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("lifecycle", "onStop invoked")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d("lifecycle", "onRestart invoked")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("lifecycle","onDestroy invoked")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -83,16 +105,22 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
 
     override fun selectedDate(dateString: String?) {
         if (dateString.equals(DataConfig.getCurrentDate(this))) {
-            todayTitle.setText("Today")
+            todayTitle.text = "Today"
         }else
         {
-            todayTitle.setText(DataConfig.formatDate(this, dateString!!))
+            todayTitle.text = DataConfig.formatDate(this, dateString!!)
         }
         chooseDate = dateString!!
-        FetchTask(dateString).execute()
+        fetchTask(dateString)
+    }
+    
+    @OnClick(R.id.btn_add_new)
+    fun clickAddNew() {
+        val intent = Intent(this, TaskActivity::class.java)
+        startActivity(intent)
     }
 
-    override fun clickItem(taskItem: TaskItem?, view: View?) {
+    override fun clickItem(taskItem: TaskItem, view: View) {
         val popupMenu = PopupMenu(this, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.show()
@@ -104,100 +132,32 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
                     startActivity(intent)
                 }
                 R.id.menu_delete -> {
-                    DeleteTask(taskItem!!).execute()
+                    DataConfig.deleteTask(this, taskItem)
+                    (allTasks as ArrayList<TaskItem>).clear()
+                    fetchTask(chooseDate)
                 }
             }
             true
         })
     }
-    
-    @OnClick(R.id.btn_add_new)
-    fun clickAddNew() {
-        val intent = Intent(this, TaskActivity::class.java)
-        startActivity(intent)
-    }
 
-    inner class FetchTask(var dateString: String) : CoroutineScope {
-        private var job: Job = Job()
-        override val coroutineContext: CoroutineContext
-            get() = Dispatchers.Main + job // to run code in Main(UI) Thread
+    private fun fetchTask(dateString: String){
 
-        // call this method to cancel a coroutine when you don't need it anymore,
-        // e.g. when user closes the screen
-        fun cancel() {
-            job.cancel()
-        }
+        val getTasksList =  DataConfig.getTasksByDate(this, {
+            (allTasks as ArrayList).addAll(it)
+                                                            },dateString)
+        //(allTasks as ArrayList).addAll((db.taskDao().getTasksByDate(dateString)))
 
-        fun execute() = launch {
-            onPreExecute()
-            val result = doInBackground() // runs in background thread without blocking the Main Thread
-            onPostExecute(result)
-        }
-
-        private suspend fun doInBackground(): String = withContext(Dispatchers.IO) { // to run code in Background Thread
-            allTasks!!.addAll(db.taskDao()!!.getTasksByDate(dateString)!!)
-            delay(1000) // simulate async work
-            return@withContext "Got Items by Date"
-        }
-
-        // Runs on the Main(UI) Thread
-        private fun onPreExecute() {
-
-        }
-
-        // Runs on the Main(UI) Thread
-        private fun onPostExecute(result: String) {
-            Log.e(TAG, "ALL TASKS: " + allTasks!!.size)
-            taskCount.setText(allTasks!!.size.toString() + " tasks")
-            if (allTasks!!.isNotEmpty()) {
-                noResult.setVisibility(View.GONE)
+        Log.e(TAG, "ALL TASKS: " + allTasks.size)
+        taskCount.text = (allTasks.size.toString() + " tasks")
+            if (allTasks.isNotEmpty()) {
+                noResult.visibility = View.GONE
             } else {
-                noResult.setVisibility(View.VISIBLE)
-                allTasks?.clear()
+                noResult.visibility = View.VISIBLE
+                (allTasks as ArrayList<TaskItem>).clear()
             }
 
             adapter.notifyDataSetChanged()
-        }
-    }
-
-    inner class DeleteTask(var taskItem: TaskItem) : CoroutineScope {
-        private var job: Job = Job()
-        override val coroutineContext: CoroutineContext
-            get() = Dispatchers.Main + job // to run code in Main(UI) Thread
-
-        // call this method to cancel a coroutine when you don't need it anymore,
-        // e.g. when user closes the screen
-        fun cancel() {
-            job.cancel()
-        }
-
-        fun DeleteTask(taskItem: TaskItem) {
-            this.taskItem = taskItem
-        }
-
-        fun execute() = launch {
-            onPreExecute()
-            val result = doInBackground() // runs in background thread without blocking the Main Thread
-            onPostExecute(result)
-        }
-
-        private suspend fun doInBackground(vararg params: Void?): Void? = withContext(Dispatchers.IO) { // to run code in Background Thread
-            db!!.taskDao()!!.deleteTask(taskItem)
-            return@withContext null
-        }
-
-        // Runs on the Main(UI) Thread
-        private fun onPreExecute() {
-
-        }
-
-        // Runs on the Main(UI) Thread
-        private fun onPostExecute(result: Void?) {
-            onPostExecute(result)
-            allTasks?.clear()
-            FetchTask(chooseDate).execute()
-
-        }
     }
 
 }

@@ -1,7 +1,10 @@
 package com.gshan.todolistapp
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -13,11 +16,12 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.google.android.material.textfield.TextInputEditText
 import com.gshan.todolistapp.callback.ActionCallBack
+import com.gshan.todolistapp.config.DataConfig
 import com.gshan.todolistapp.database.AppDatabase
 import com.gshan.todolistapp.database.TaskItem
+import com.gshan.todolistapp.helperList.HelperListMethod
+import com.gshan.todolistapp.model.TaskItemModels
 import com.gshan.todolistapp.utils.CustomDialogUtils
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 
 class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, ActionCallBack.TimePickerCallBack {
@@ -40,7 +44,7 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
         ButterKnife.bind(this)
 
         db = AppDatabase.getDatabase(this)
-        parmItem = intent.getSerializableExtra("item") as? TaskItem
+        parmItem = intent.getSerializableExtra("Item") as? TaskItem
 
         setSupportActionBar(toolbar)
         supportActionBar!!.title = ""
@@ -69,13 +73,25 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
                 parmItem!!.title = taskTitle.text.toString()
                 parmItem!!.time = taskTime.text.toString()
                 parmItem!!.date = taskDate.text.toString()
-                AddTask(parmItem!!).execute();
+                DataConfig.updateStatus(this, parmItem!!)
+                Toast.makeText(this, "Task Edited!", Toast.LENGTH_SHORT).show()
             }else {
-                val taskItem = TaskItem(0, title = taskTitle.toString(), time = taskTime.toString(), date = taskDate.toString())
+                val taskItem = TaskItem(null, title = taskTitle.toString(), time = taskTime.toString(), date = taskDate.toString())
                 taskItem.title = taskTitle.text.toString()
                 taskItem.date = taskDate.text.toString()
                 taskItem.time = taskTime.text.toString()
-                db!!.taskDao()!!.insertTask(taskItem)
+
+                DataConfig.addTask(this, taskItem)
+                Toast.makeText(this, "Task Added!", Toast.LENGTH_SHORT).show()
+
+                taskTitle.setText("")
+                taskTime.setText("")
+                taskDate.setText("")
+
+//                val intent = Intent(this, MainActivity::class.java)
+//                overridePendingTransition(0,0)
+//                startActivity(intent)
+                finish()
             }
         }
     }
@@ -98,50 +114,5 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
     override fun selectedTime(timeString: String?) {
         taskTime.setText(timeString)
     }
-
-    inner class AddTask(var taskItem: TaskItem) : CoroutineScope {
-        private var job: Job = Job()
-        override val coroutineContext: CoroutineContext
-            get() = Dispatchers.Main + job // to run code in Main(UI) Thread
-
-        // call this method to cancel a coroutine when you don't need it anymore,
-        // e.g. when user closes the screen
-        fun cancel() {
-            job.cancel()
-        }
-
-        fun AddTask(taskItem: TaskItem) {
-            this.taskItem = taskItem
-        }
-
-        fun execute() = launch {
-            onPreExecute()
-            val result = doInBackground() // runs in background thread without blocking the Main Thread
-            onPostExecute(result)
-        }
-
-        private suspend fun doInBackground(vararg params: Void?): Void? = withContext(Dispatchers.IO) { // to run code in Background Thread
-            if(parmItem != null){
-                db!!.taskDao()!!.updateTask(taskItem)
-            }else{
-                db!!.taskDao()!!.insertTask(taskItem)
-            }
-            delay(1000) // simulate async work
-            return@withContext null
-        }
-
-        // Runs on the Main(UI) Thread
-        private fun onPreExecute() {
-
-        }
-
-        // Runs on the Main(UI) Thread
-        private fun onPostExecute(result: Void?) {
-            onPostExecute(result)
-            taskTitle.setText("")
-            taskTime.setText("")
-            taskDate.setText("")
-            }
-        }
 
 }
