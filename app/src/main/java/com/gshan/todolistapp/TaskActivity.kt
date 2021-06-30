@@ -1,11 +1,7 @@
 package com.gshan.todolistapp
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -19,8 +15,6 @@ import com.gshan.todolistapp.callback.ActionCallBack
 import com.gshan.todolistapp.config.DataConfig
 import com.gshan.todolistapp.database.AppDatabase
 import com.gshan.todolistapp.database.TaskItem
-import com.gshan.todolistapp.helperList.HelperListMethod
-import com.gshan.todolistapp.model.TaskItemModels
 import com.gshan.todolistapp.utils.CustomDialogUtils
 
 
@@ -50,11 +44,7 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
         supportActionBar!!.title = ""
         toolbarTitle.text = if (parmItem != null) "Edit" else "Add New" + " Task"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener(object : View.OnClickListener {
-            override fun onClick(view: View){
-                finish()
-            }
-        })
+        toolbar.setNavigationOnClickListener { finish() }
 
         if (parmItem != null){
             taskTitle.setText(parmItem!!.title)
@@ -87,10 +77,6 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
                 taskTitle.setText("")
                 taskTime.setText("")
                 taskDate.setText("")
-
-//                val intent = Intent(this, MainActivity::class.java)
-//                overridePendingTransition(0,0)
-//                startActivity(intent)
                 finish()
             }
         }

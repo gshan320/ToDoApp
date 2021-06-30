@@ -31,11 +31,11 @@ object CustomDialogUtils {
             selectedDate = dayOfMonth.toString() + "-" + (month + 1) + "-" + year
         }
 
-        dialog.setPositiveButton("Update") { dialog, which ->
+        dialog.setPositiveButton("Update") { dialog, _ ->
             dialog.dismiss()
             callback.selectedDate(selectedDate)
         }
-        dialog.setNegativeButton("Cancel") { dialog, which -> dialog.dismiss() }
+        dialog.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
 
         val alert = dialog.create()
         alert.show()
@@ -48,16 +48,16 @@ object CustomDialogUtils {
 
         dialog.setView(timeDialog)
 
-        timePicker.setOnTimeChangedListener { timePickerView, hourOfDay, minute ->
+        timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
            selectedTime  = "$hourOfDay:$minute"
         }
 
         dialog.setView(timeDialog)
-        dialog.setPositiveButton("OK"){ dialog, which ->
+        dialog.setPositiveButton("OK"){ dialog, _ ->
             dialog.dismiss()
             callback.selectedTime(selectedTime)
         }
-        dialog.setNegativeButton("Cancel"){dialog, which -> dialog.dismiss()}
+        dialog.setNegativeButton("Cancel"){ dialog, _ -> dialog.dismiss()}
         val alert = dialog.create()
         alert.show()
     }

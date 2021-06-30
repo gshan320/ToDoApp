@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 object DataConfig {
     fun getCurrentDate(context: Context): String {
@@ -52,20 +53,12 @@ object DataConfig {
     }
 
     //Get Tasks By Date
-    fun getTasksByDate(context: Context, func: (List<TaskItem>) -> Unit ,params: String){
+    fun getTasksByDate(context: Context, func: (List<TaskItem>) -> Boolean,params: String){
         val dbHelper = HelperListMethodImplementation(AppDatabase.getDatabase(context))
         CoroutineScope(Dispatchers.Default).launch {
             var taskList = dbHelper.getDataByDate(params)
             func.invoke(taskList)
         }
     }
-
-//    fun fetchAllNotification(context: Context, func: (List<InboxEntity>) -> Unit,userEmail:String) {
-//        val dbHelper = InboxHelperImpl(AppDatabase.getInstance(context))
-//        CoroutineScope(Dispatchers.Main).launch {
-//            val inboxList = dbHelper.getAllData(userEmail)
-//            func.invoke(inboxList)
-//        }
-//    }
 
 }

@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
                 AppDatabase::class.java,
                 "TASK_DAO_ROOM_DATABASE"
             )
-                .allowMainThreadQueries()
+                //.allowMainThreadQueries()
                 .fallbackToDestructiveMigration()
                 .build()
     }
