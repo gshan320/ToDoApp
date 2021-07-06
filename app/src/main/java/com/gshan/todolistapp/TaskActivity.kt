@@ -30,7 +30,7 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
     @BindView(R.id.et_date) lateinit var taskDate: TextInputEditText
 
     var db: AppDatabase? = null
-    var parmItem: TaskItem? = null
+    private var parmItem: TaskItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +65,7 @@ class TaskActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
                 parmItem!!.date = taskDate.text.toString()
                 DataConfig.updateStatus(this, parmItem!!)
                 Toast.makeText(this, "Task Edited!", Toast.LENGTH_SHORT).show()
+                finish()
             }else {
                 val taskItem = TaskItem(null, title = taskTitle.toString(), time = taskTime.toString(), date = taskDate.toString())
                 taskItem.title = taskTitle.text.toString()

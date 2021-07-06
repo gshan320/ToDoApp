@@ -40,7 +40,7 @@ object DataConfig {
     fun deleteTask(context: Context, params: TaskItem) {
         val dbHelper = HelperListMethodImplementation(AppDatabase.getDatabase(context))
         CoroutineScope(Dispatchers.Default).launch {
-            dbHelper.updateData(params)
+            dbHelper.deleteData(params)
         }
     }
 
@@ -53,12 +53,19 @@ object DataConfig {
     }
 
     //Get Tasks By Date
-    fun getTasksByDate(context: Context, func: (List<TaskItem>) -> Boolean,params: String){
+    fun getTasksByDate(context: Context, func: (List<TaskItem>) -> Boolean, dateString: String){
         val dbHelper = HelperListMethodImplementation(AppDatabase.getDatabase(context))
         CoroutineScope(Dispatchers.Default).launch {
-            var taskList = dbHelper.getDataByDate(params)
+            var taskList = dbHelper.getDataByDate(dateString)
             func.invoke(taskList)
         }
     }
+
+//    fun getTasksByDate(context: Context, dateString: String) {
+//        val dbHelper = HelperListMethodImplementation(AppDatabase.getDatabase(context))
+//        CoroutineScope(Dispatchers.Default).launch {
+//            dbHelper.getDataByDate(dateString)
+//        }
+//    }
 
 }

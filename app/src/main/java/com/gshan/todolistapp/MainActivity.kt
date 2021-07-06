@@ -23,6 +23,9 @@ import com.gshan.todolistapp.config.DataConfig
 import com.gshan.todolistapp.database.AppDatabase
 import com.gshan.todolistapp.database.TaskItem
 import com.gshan.todolistapp.utils.CustomDialogUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -36,8 +39,8 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
     @BindView(R.id.task_count) lateinit var taskCount: TextView
     @BindView(R.id.today_title) lateinit var todayTitle: TextView
 
-    lateinit var adapter: TaskListAdapter
-    private lateinit var allTasks: List<TaskItem>
+    private lateinit var adapter: TaskListAdapter
+    private lateinit var allTasks: ArrayList<TaskItem>
     private lateinit var db: AppDatabase
     private lateinit var chooseDate: String
     private val TAG = MainActivity::class.java.simpleName
@@ -56,7 +59,7 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
         chooseDate = DataConfig.getCurrentDate(this)
 
         allTasks = ArrayList()
-        (allTasks as ArrayList<TaskItem>).clear()
+        allTasks.clear()
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = TaskListAdapter(this, allTasks, this)
         recyclerView.adapter = adapter
@@ -133,7 +136,7 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
                 }
                 R.id.menu_delete -> {
                     DataConfig.deleteTask(this, taskItem)
-                    (allTasks as ArrayList<TaskItem>).clear()
+                    allTasks.clear()
                     fetchTask(chooseDate)
                 }
             }
@@ -143,10 +146,12 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
 
     private fun fetchTask(dateString: String){
 
-        val getTasksList =  DataConfig.getTasksByDate(this, {
-            (allTasks as ArrayList).addAll(it)
-                                                            },dateString)
-        //(allTasks as ArrayList).addAll((db.taskDao().getTasksByDate(dateString)))
+        DataConfig.getTasksByDate(this, {
+            allTasks.addAll(it) }, dateString)
+
+//        GlobalScope.launch(Dispatchers.Default) {
+//            (allTasks as ArrayList).addAll(db.taskDao().getTasksByDate(dateString))
+//        }
 
         Log.e(TAG, "ALL TASKS: " + allTasks.size)
         taskCount.text = (allTasks.size.toString() + " tasks")
@@ -154,7 +159,7 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
                 noResult.visibility = View.GONE
             } else {
                 noResult.visibility = View.VISIBLE
-                (allTasks as ArrayList<TaskItem>).clear()
+                allTasks.clear()
             }
 
             adapter.notifyDataSetChanged()
