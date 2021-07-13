@@ -32,8 +32,8 @@ object CustomDialogUtils {
         }
 
         dialog.setPositiveButton("Update") { dialog, _ ->
-            dialog.dismiss()
             callback.selectedDate(selectedDate)
+            dialog.dismiss()
         }
         dialog.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
 

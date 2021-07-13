@@ -1,5 +1,6 @@
 package com.gshan.todolistapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -23,10 +24,6 @@ import com.gshan.todolistapp.config.DataConfig
 import com.gshan.todolistapp.database.AppDatabase
 import com.gshan.todolistapp.database.TaskItem
 import com.gshan.todolistapp.utils.CustomDialogUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -65,7 +62,7 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
         recyclerView.adapter = adapter
 
         Log.e(TAG, "CURRENT DATE: " + DataConfig.getCurrentDate(this))
-        fetchTask(DataConfig.getCurrentDate(this))
+        fetchTask(chooseDate)
 
     }
 
@@ -88,6 +85,7 @@ class MainActivity : AppCompatActivity(), ActionCallBack.DatePickerCallBack, Act
     override fun onRestart() {
         super.onRestart()
         Log.d("lifecycle", "onRestart invoked")
+        fetchTask(chooseDate)
     }
 
     override fun onDestroy() {
